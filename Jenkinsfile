@@ -7,7 +7,4 @@ pipeline {
       }
     }
   }
-  environment {
-    SIT = 'sit'
-  }
 }
