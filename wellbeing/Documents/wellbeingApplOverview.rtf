@@ -31,17 +31,25 @@ System to instruct hardware according to info coming from main processing engine
 Candidates for hardware implementation:\
 \'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
 System to capture external stimuli (hardware interface, equivalent to cognitive senses)\
+System to translate non-physical instructions to external world (equivalent to outbound actuations)\
 \
-\
-Module: exrest (serves as REST webservice provider)\
+Software Module: exrest (serves as REST webservice provider)\
 \'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
 Technology: Java\
 \
-Module:  \
+Module:  1)System to translate from hardware language to software information\
+               2)Transmit the info to main processing engine (via REST websvc calls)\
+               3)Read the results into the System to translate from software to hardware\
+               4)System to instruct hardware according to info coming from main processing engine\
 \'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
 Technology: Python\
+a.REST client module to interface with main processing engine\
+b.Input module to collect external stimuli.\
 \
-Module: database to support REST module\
+One/many-to-one/many relations exist between a & b.\
+(will try to implement these by multithreading, so one flow does not have to wait for io or, delay in other flow)\
+\
+Module: database to support main processing engine \
 \'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
 Technology: cassandra\
 \
