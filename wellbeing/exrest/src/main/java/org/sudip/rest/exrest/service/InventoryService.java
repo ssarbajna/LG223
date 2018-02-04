@@ -10,6 +10,11 @@ import org.sudip.rest.exrest.model.Inventory;
 public class InventoryService {
 	private Map<Long, Inventory> inventories = DatabaseClass.getInventories();
 	
+	public InventoryService() {
+	      inventories.put(1L, new Inventory(1, "try service constructor 1","sudip"));
+	      inventories.put(2L, new Inventory(2, "try service constructor 2","sudip"));
+	}
+	
 	public List<Inventory> getAllInventories(){
 		
 		return new ArrayList<>(inventories.values());

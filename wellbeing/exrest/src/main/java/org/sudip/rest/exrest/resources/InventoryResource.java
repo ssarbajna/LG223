@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -19,4 +20,12 @@ public class InventoryResource {
 	public List<Inventory> getInventories() {
 		return inventoryService.getAllInventories();
 	}
+	
+	@GET
+	@Path("/{inventoryId}")
+	@Produces(MediaType.APPLICATION_XML)
+	public Inventory getInventory(@PathParam("inventoryId") long id) {
+		return inventoryService.getInventory(id);
+	}
+	
 }
