@@ -16,14 +16,14 @@ public class InventoryResource {
 	InventoryService inventoryService = new InventoryService();
 	
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<Inventory> getInventories() {
 		return inventoryService.getAllInventories();
 	}
 	
 	@GET
 	@Path("/{inventoryId}")
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Inventory getInventory(@PathParam("inventoryId") long id) {
 		return inventoryService.getInventory(id);
 	}

@@ -1,0 +1,88 @@
+Overview of Appl: wellbeing
+———————————————————
+
+INPUTs —> PROCESSING —> OUTPUTs
+
+External stimuli (INPUTs) —> 
+System to capture them (hardware interface, equivalent to cognitive senses) —> 
+System to translate from hardware language to software information —> 
+Transmit the info to main processing engine —> 
+PROCESSING (equivalent to mind) —>
+Read the results into the System to translate from software to hardware —>  
+System to instruct hardware according to info coming from main processing engine—> 
+System to transmit these instructions to external world (equivalent to outbound actuations)
+OUTPUTs (equivalent to outbound senses or, actuations)
+
+Candidates for software implementation:
+———————————————
+System to translate from hardware language to software information
+Transmit the info to main processing engine
+PROCESSING (equivalent to mind)
+Read the results into the System to translate from software to hardware
+System to instruct hardware according to info coming from main processing engine
+
+Candidates for hardware implementation:
+———————————————
+System to capture external stimuli (hardware interface, equivalent to cognitive senses)
+System to translate non-physical instructions to external world (equivalent to outbound actuations)
+
+Software Module: exrest (serves as REST webservice provider)
+————————————————————————
+Technology: Java
+
+Module:  1)System to translate from hardware language to software information
+               2)Transmit the info to main processing engine (via REST websvc calls)
+               3)Read the results into the System to translate from software to hardware
+               4)System to instruct hardware according to info coming from main processing engine
+—————————————
+Technology: Python
+a.REST client module to interface with main processing engine
+b.Input module to collect external stimuli.
+
+One/many-to-one/many relations exist between a & b.
+(will try to implement these by multithreading, so one flow does not have to wait for io or, delay in other flow)
+
+Module: database to support main processing engine 
+————————————
+Technology: cassandra
+
+
+Syntax to export/import Jenkins job from Command Line Interface
+——————————————————
+Export (here job name is exrest_f1):
+java -jar jenkins-cli.jar -s http://localhost:8080/ get-job --username jenkins --password jenkins exrest_f1 > exrest_f1.xml
+
+Import(we are creating a job called exrest_f1imp from above export):
+java -jar jenkins-cli.jar -s http://localhost:8080/ create-job --username jenkins --password jenkins exrest_f1imp < exrest_f1.xml
+
+Deployment of the exrest REST module:
+========================================
+1) Stage the Jenkins built war file in aws host via scp:
+   scp -v -i ~/sudip.pem target/exrest.war ubuntu@ec2-18-216-212-188.us-east-2.compute.amazonaws.com:dockerTomcatWork/target
+
+relevant Docker commands:
+——————————
+get rid of relevant running containers: docker ps -a;  docker rm $(docker ps -a -q); docker images; 
+get rid of the old docker image: docker rmi tomcat:withExrest; docker images
+build the image again: docker build -t tomcat:withExrest .; docker images
+finally run the modified image: docker run --name=tomEx -p 80:8080 tomcat:withExrest
+
+
+After this the REST WS can be accessed at: http://ec2-18-216-212-188.us-east-2.compute.amazonaws.com/exrest/webapi/inventories/2
+
+**** takes time to get first response; subsequent response is fast*******
+Connect between containers:
+==============================
+docker network create test
+docker network connect test container1
+docker network connect test container2
+
+Then from inside container1 : “ping container2” works and vice-versa ie. container2 -> container. All are on the same network called ’test’
+
+Access docker host from within a container:
+1. Grade the ip of the host in a variable HOST_IP: 
+    HOST_IP=`ip -4 addr show scope global dev docker0 | grep inet | awk '{print \$2}'| cut -d / -f1`
+2. Then add this host to the container in the ‘docker run’ command by giving —add-host option:
+       docker run --add-host outside:$HOST_IP --name <containerName> -d <imageName>
+   That HOST_IP becomes visible inside the container as a host called 'outside'
+
