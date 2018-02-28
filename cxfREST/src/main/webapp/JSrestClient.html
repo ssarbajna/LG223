@@ -1,0 +1,59 @@
+<script type="text/javascript" language="javascript">
+
+function send()
+{
+
+	var urlvariable;
+
+    urlvariable = "text";
+
+    var ItemJSON;
+
+    ItemJSON = '[{"created":"2018-02-16T22:48:10.752","creator":"sudipFromJS","inventory":"resourceCreatedFromJS"}]';
+
+    URL = "http://localhost:8080/exrest/webapi/inventories";  //Your URL
+    //URL = "http://localhost:8080/exrest/webapi/inventories";  //Your URL for POST to add a resource
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+
+        if (this.readyState == 4 && this.status == 200) {
+        	var myArr = JSON.parse(this.responseText);
+             myFunction(this.responseText,this.statusText); // a function to see the returned text 
+             myFunction2(myArr); // another function call to create links out of the returned JSON
+        }
+    };
+    xmlhttp.open("GET", URL, true);
+    xmlhttp.send(); 
+    //xmlhttp.open("POST", URL, false); // todo: will test by doing POST with a locally built JSON
+    //xmlhttp.send(ItemJSON); 
+}
+
+function myFunction(txt, stTxt) {
+	//alert(txt);
+    document.getElementById("div").innerHTML = stTxt + "<BR><textarea rows='30' cols='100'>" + txt + "</textarea>";
+}
+
+function myFunction2(arr) {
+    var out = "";
+    var i;
+    for(i = 0; i < arr.length; i++) {
+        out += '<a href="' + arr[i].id + '">' + 
+        arr[i].creator + '</a><br>';
+    }
+    document.getElementById("div2").innerHTML = out;
+}
+
+</script>
+
+
+<html>
+<body id='bod'><button type="submit" onclick="javascript:send()">call</button>
+<div id='div'>
+
+</div>
+<div id='div2'>
+
+</div>
+</body>
+</html>
