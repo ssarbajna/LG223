@@ -10,6 +10,7 @@ function iterateOverDays() {
   var currAaaCrCrdBal = sheet.getRange(5, 2).getValue();
   var currBalCap360chk = sheet.getRange(3, 4).getValue();
   var currPncSavBal = sheet.getRange(4, 4).getValue();
+  var currEMGDBal = sheet.getRange(5, 4).getValue();
   
   //grab noOfDay2project
   var noOfDay2project = sheet.getRange(2, 4).getValue();
@@ -26,16 +27,19 @@ function iterateOverDays() {
   var runningCap360ChkBal = currBalCap360chk;
   //5. create variable for running total for pncSavBal
   var runningPncSavBal = currPncSavBal;
+  //6. create variable for running total for EMGDBal
+  var runningEMGDBal = currEMGDBal;
   
   // create an object variousBals{} of these to be passed to subsequent functions 
   //// element 1 = pncChkBal, element 2 = chaseCrCrdBal, element 3 = aaaCrCrdBal, element 4 = runningCap360ChkBal, element 5 = pncSavBal
   var variousBals = {runningPncChkBal:runningPncChkBal, currChaseCrCrdBal:currChaseCrCrdBal, currAaaCrCrdBal:currAaaCrCrdBal, runningCap360ChkBal:runningCap360ChkBal,
-                     runningPncSavBal:runningPncSavBal, currActivityString: "Start: "};
+                     runningPncSavBal:runningPncSavBal, runningEMGDBal:runningEMGDBal, currActivityString: "Start: "};
   Logger.log("Beginning running totals: PNCchk=" + variousBals.runningPncChkBal + " Chase= " + variousBals.currChaseCrCrdBal + 
-             " aaa= " + variousBals.currAaaCrCrdBal + " cap360Chk= " + variousBals.runningCap360ChkBal + " PNCsav= " + variousBals.runningPncSavBal);
+             " aaa= " + variousBals.currAaaCrCrdBal + " cap360Chk= " + variousBals.runningCap360ChkBal + " PNCsav= " + variousBals.runningPncSavBal +
+            " EMGD= " + variousBals.runningEMGDBal);
   
   //grab the range for rules
-  var ruleRange = sheet.getRange(7, 1, 47, 5);   // starting at row=7, col=1 for 47 rows 5 columns
+  var ruleRange = sheet.getRange(7, 1, 50, 5);   // starting at row=7, col=1 for 50 rows 5 columns
   //TODO: will try to get the rules range from a namedrange in input sheet
 
   // grab the result sheet, clear result sheet and write out start time of the process
@@ -52,7 +56,8 @@ function iterateOverDays() {
   resultSheet.getRange(tgtRow, 4).setValue("AaaCrCrdBal");
   resultSheet.getRange(tgtRow, 5).setValue("Cap360ChkBal");
   resultSheet.getRange(tgtRow, 6).setValue("PNCsavBal");
-  resultSheet.getRange(tgtRow, 7).setValue("Hint");
+  resultSheet.getRange(tgtRow, 7).setValue("EMGDBal");
+  resultSheet.getRange(tgtRow, 8).setValue("Hint");
   
   tgtRow++; // write out opening balances on next row
     
@@ -62,7 +67,8 @@ function iterateOverDays() {
   resultSheet.getRange(tgtRow, 4).setValue(variousBals.currAaaCrCrdBal);
   resultSheet.getRange(tgtRow, 5).setValue(variousBals.runningCap360ChkBal);
   resultSheet.getRange(tgtRow, 6).setValue(variousBals.runningPncSavBal);
-  resultSheet.getRange(tgtRow, 7).setValue("Opening balances");  
+  resultSheet.getRange(tgtRow, 7).setValue(variousBals.runningEMGDBal);
+  resultSheet.getRange(tgtRow, 8).setValue("Opening balances");  
   
   //loop over days by incrementing the date by one for noOfDay2project times
   for (var i=0; i<noOfDay2project; i++){
@@ -75,7 +81,8 @@ function iterateOverDays() {
     iterateOverRange(currentDate, ruleRange, variousBals);
     // print running totals after the possible manipulation inside the function
     Logger.log("After func manipulation running totals: PNCchk=" + variousBals.runningPncChkBal + " Chase= " + variousBals.currChaseCrCrdBal +
-               " aaa= " + variousBals.currAaaCrCrdBal + " Cap360Chk= " + variousBals.runningCap360ChkBal + " PNCsav= " + variousBals.runningPncSavBal);
+               " aaa= " + variousBals.currAaaCrCrdBal + " Cap360Chk= " + variousBals.runningCap360ChkBal + " PNCsav= " + variousBals.runningPncSavBal +
+              " EMGD= " + variousBals.runningEMGDBal);
   // write current date, 3 balances to the tgtRow in result sheet    
     resultSheet.getRange(tgtRow, 1).setValue(currentDate);
     resultSheet.getRange(tgtRow, 2).setValue(variousBals.runningPncChkBal);
@@ -83,10 +90,11 @@ function iterateOverDays() {
     resultSheet.getRange(tgtRow, 4).setValue(variousBals.currAaaCrCrdBal);
     resultSheet.getRange(tgtRow, 5).setValue(variousBals.runningCap360ChkBal);
     resultSheet.getRange(tgtRow, 6).setValue(variousBals.runningPncSavBal);
-    resultSheet.getRange(tgtRow, 7).setValue(variousBals.currActivityString);
+    resultSheet.getRange(tgtRow, 7).setValue(variousBals.runningEMGDBal);
+    resultSheet.getRange(tgtRow, 8).setValue(variousBals.currActivityString);
     // then reset the string
     variousBals.currActivityString = "Start: ";
-       }
+  }
   //end loop
   
 }
@@ -158,7 +166,7 @@ function operateOnBalances(currentDate, dayFromRule, itemCategory1FromRule, item
       ////// if cash/credit indicator = CRA then apply tranAmount to aaaCrCrdBal running total
   // if this is a adhoc item and date value of current day in iteration matches the date in current rule
   if (itemCategory1FromRule=="adhoc" && currentDate.getTime() == dayFromRule.getTime()){ // date match is through getTime()
-     Logger.log("From Balance Operation: this is a monthly item!");
+     Logger.log("From Balance Operation: this is a adhoc item!");
      applyTransaction2CurrentBalance (itemNameFromRule, cash_creditFromRule, variousBals, amountFromRule);
   }
   
@@ -181,12 +189,18 @@ function applyTransaction2CurrentBalance (itemNameFromRule, cash_creditFromRule,
      
      // if cash/credit indicator = CACC then apply tranAmount to cap360ChkBal running total
      if (cash_creditFromRule == 'CACC'){
-       variousBals.runningCap360ChkBal = variousBals.runningCap360ChkBal + amountFromRule;
-       Logger.log("Applying to CapitalOne360Checking");
+       applTran2CurrBalCap360Chk(variousBals, amountFromRule);
        // build activity string
        variousBals.currActivityString = variousBals.currActivityString + "," + itemNameFromRule + ":" + amountFromRule + ":" + cash_creditFromRule;
       }
-     
+
+     // if cash/credit indicator = CAEMGD then apply tranAmount to EMGDBal running total
+     if (cash_creditFromRule == 'CAEMGD'){
+       applTran2CurrBalEmgd(variousBals, amountFromRule);
+       // build activity string
+       variousBals.currActivityString = variousBals.currActivityString + "," + itemNameFromRule + ":" + amountFromRule + ":" + cash_creditFromRule;
+      }
+
      // if cash/credit indicator = CRCH then apply tranAmount to chaseCrCrdBal running total
      if (cash_creditFromRule == 'CRCH'){
        variousBals.currChaseCrCrdBal = variousBals.currChaseCrCrdBal + amountFromRule;
@@ -236,12 +250,18 @@ function applTran2CurrBalPNCsav (variousBals, amountFromRule) {
 
 }
 
-function applTran2CurrBalCap360chkSav () {
+function applTran2CurrBalCap360Chk (variousBals, amountFromRule) {
+  Logger.log("Applying to CapitalOne360Checking");
+  variousBals.runningCap360ChkBal = variousBals.runningCap360ChkBal + amountFromRule;
+}
+
+function applTran2CurrBalCap360Sav () {
   
 }
 
-function applTran2CurrBalEmgd () {
-  
+function applTran2CurrBalEmgd (variousBals, amountFromRule) {
+  Logger.log("Applying to EMGD");
+  variousBals.runningEMGDBal = variousBals.runningEMGDBal + amountFromRule;
 }
 
 function applTran2CurrBalCRcrd () {
