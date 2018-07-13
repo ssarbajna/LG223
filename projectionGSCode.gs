@@ -39,7 +39,7 @@ function iterateOverDays() {
             " EMGD= " + variousBals.runningEMGDBal);
   
   //grab the range for rules
-  var ruleRange = sheet.getRange(7, 1, 50, 5);   // starting at row=7, col=1 for 50 rows 5 columns
+  var ruleRange = sheet.getRange(7, 1, 51, 5);   // starting at row=7, col=1 for 51 rows 5 columns
   //TODO: will try to get the rules range from a namedrange in input sheet
 
   // grab the result sheet, clear result sheet and write out start time of the process
